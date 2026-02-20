@@ -42,8 +42,9 @@ Quintero, F., & Velásquez, N. (2022). Implementation of TETIS hydrologic model 
 ## Inputs
 
 - **Forcings :**
-  - **Precipitation** – rainfall rate applied to each hillslope, in mm/hour  
-  - **Evapotranspiration** – evapotranspiration rate, in mm/month.  
+  - Precipitation (P),  in mm/hour  
+  - Evapotranspiration (ET), in mm/month
+  - Air Temperature (Ta), in C $\degree$
 
 - **Hillslope / channel properties:**
   - **Hillslope area** – contributing surface area draining into the channel, in square kilometers.
@@ -65,13 +66,13 @@ Quintero, F., & Velásquez, N. (2022). Implementation of TETIS hydrologic model 
     - Exponent of channel velocity discharge $\lambda_1$ =0.3  (dimensionless)
     - Exponent of channel velocity area $\lambda_2$ =-0.1  (dimensionless)
     - Maximum static storage $H_{u}$ = 100 (mm)
-    - Temperature threshold $T = 0 (\degree C) $ 
-    - Melting factor $MF = 5 (mm / \degree C / day)$
-    - Velocity of water on the hillslope surface $v_h=0.1m/s$
-    - Infiltration rate $ir=3(mm/hr)$
-    - Percolation rate  $pr=2(mm/hr)$
-    - Residence time in upper soil layer $rtus = 10 (day)$
-    - Residence time in lower soil layer $rtus = 100 (day)$
+    - Temperature threshold T = 0 $(\degree C) $ 
+    - Melting factor MF = 5 $(mm / \degree C / day)$
+    - Velocity of water on the hillslope surface $v_h$ =0.1m/s
+    - Infiltration rate inf =3$(mm/hr)$
+    - Percolation rate  per=2 $(mm/hr)$
+    - Residence time in upper soil layer $\alpha_1$ = 10 (day)
+    - Residence time in lower soil layer $\alpha_2$ = 100 (day)
 
     Other parameters used internally in the formulation are
     - Reference area $Ar=1km^2$
@@ -84,35 +85,68 @@ Quintero, F., & Velásquez, N. (2022). Implementation of TETIS hydrologic model 
 ## Outputs
 
 - Discharge in the channel [m3/s]  
+- Snow Water Equivalent in the snow storage [m]
 - Water ponded in the surface [m]
 - Water stored in the upper layer of soil [m]
 - Water stored in the bottom layer of soil [m] 
-- Accumulated precipitation [m]
-- Accumulated runoff [m]
+- Snowmelt [m3/s]
+- Surface Flow [m3/s]
+- Interflow [m3/s]
 - Baseflow [m3/s]
 
 ---
 
 ## Equations
-In the formulation equations $L$ is the length of the channel, $A_h$ is the area of the hillslope. $s_p$ is the water stored in the ponds, $s_t$ is the water stored in the top layer of soil. $s_s$ is the water stored in the soil subsurface. $q$ is the discharge in the channel. 
+In the formulation equations:
+- $L$ is the length of the channel
+- $A_h$ is the area of the hillslope
+- $S_0$ is the snow water equivalent in the snow storage
+- $S_1$ is the water stored in the static storage
+- $S_2$ is the water ponded in the surface
+- $S_3$ is the water stored in the upper layer of soil
+- $S_4$ is the water stored in the lower layer of soil
+- $q$ is the discharge in the channel. 
 
-**Surface Soil:**
+**Snow Storage**
 $$
-\frac{ds_p}{dt}=p-q_{pc}-q_{pt}-e_p
+\frac{dS_0}{dt}=p-sm
 $$
-$p$ is the precipitation in the hillslope
+$p$ is the precipitation
 
+$sm$ is the snowmelt
+$sm$ = MF * Ta * S_0
 
-$q_{pc}$ is the flux of water ponded on the surface to the channel and is defined by $q_pc = k_2s_p$, where $k_2=v_h(L/A_h) ×10^{-3}[1/min]$
-
- $q_{pt}$ is the flux of water ponded on the surface to the top layer storage and is defined by $q_{pt} = k_t\,s_p$, where $k_t=k_2 [A+B(1-s_t/s_L )^\alpha ][1/min]$
-
-$e_p$ is the evapotranspiration in the surface of soil
-
-**Top soil layer:**
+**Static Storage**
 $$
-\frac{ds_t}{dt}=q_{pt}-q_{ts}-e_t
+\frac{dS_1}{dt}=x_1 - x_2-ET_a
 $$
+$x_1$ is 
+$x_2$ is 
+$ET_a$ is 
+
+**Surface storage**
+$$
+\frac{dS_2}{dt}=x_2 - x_3-SF
+$$
+$x_2$ is 
+$x_3$ is 
+$SF$ is 
+
+**Upper soil layer**
+$$
+\frac{dS_3}{dt}=x_3-x_4-IF
+$$
+$x_3$ is 
+$x_4$ is 
+$IF$ is 
+
+**Lower soil layer**
+$$
+\frac{dS_4}{dt}=x_4-BF
+$$
+$x_4$ is 
+$BF$ is 
+
 $q_{ts}$ is the flux of water from the top layer storage to the subsurface is defined by $q_{ts} = k_i\,s_t$ , where $k_i=k_2\beta$
 
 $e_t$ is the evapotranspiration in the top layer of soil
